@@ -14,6 +14,16 @@ from sklearn.metrics import accuracy_score, silhouette_score
 print("modeling.py loaded successfully")
 
 def clustering_plot(X, y, labels, title):
+    """
+    Plot the clustering results
+    Inputs:
+    - X: DataFrame containing the data
+    - y: DataFrame containing the true labels
+    - labels: DataFrame containing the predicted labels
+    - title: Title of the plot
+    Returns:
+    - None
+    """
     reduced_X = pd.DataFrame(UMAP(n_components=2).fit_transform(X), columns=['X1', 'X2'])
     reduced_X['cluster'] = labels
     if accuracy_score(y, labels) < 0.5:
@@ -31,6 +41,13 @@ def clustering_plot(X, y, labels, title):
 
 
 def dbscan_labels(X):
+    """
+    Compute the DBSCAN labels, ensuring that there are at least two clusters
+    Inputs:
+    - X: DataFrame containing the data
+    Returns:
+    - labels: DataFrame containing the predicted labels
+    """
     count = 0
     while count < 1000000:
         count += 100
@@ -40,6 +57,15 @@ def dbscan_labels(X):
 
 
 def logistic_regression(X_tr, y_tr, X_ts):
+    """
+    Perform logistic regression
+    Inputs:
+    - X_tr: DataFrame containing the training data
+    - y_tr: DataFrame containing the training labels
+    - X_ts: DataFrame containing the test data
+    Returns:
+    - y_pred: DataFrame containing the predicted labels
+    """
     lr = LogisticRegression(random_state=1)
     lr.fit(X_tr, y_tr)
     y_pred = lr.predict(X_ts)
@@ -47,6 +73,17 @@ def logistic_regression(X_tr, y_tr, X_ts):
 
 
 def svm(X_tr, y_tr, X_ts, kernel='linear'):
+    """
+    Perform SVM
+    Inputs:
+    - X_tr: DataFrame containing the training data
+    - y_tr: DataFrame containing the training labels
+    - X_ts: DataFrame containing the test data
+    - kernel: Kernel type
+    Returns:
+    - y_pred: DataFrame containing the predicted labels
+    - svm: SVM model
+    """
     svm = SVC(kernel=kernel)
     svm.fit(X_tr, y_tr)
     y_pred = svm.predict(X_ts)
@@ -54,6 +91,16 @@ def svm(X_tr, y_tr, X_ts, kernel='linear'):
 
 
 def plot_decision_boundary(X, y, model, title):
+    """
+    Plot the decision boundary of the 2D model
+    Inputs:
+    - X: DataFrame containing the data
+    - y: DataFrame containing the labels
+    - model: Model
+    - title: Title of the plot
+    Returns:
+    - None
+    """
     x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
     y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
     xx, yy = np.meshgrid(np.arange(x_min, x_max, 0.01), np.arange(y_min, y_max, 0.01))
@@ -69,6 +116,16 @@ def plot_decision_boundary(X, y, model, title):
 
     
 def random_forest(X_tr, y_tr, X_ts, n_estimators=100):
+    """
+    Perform random forest
+    Inputs:
+    - X_tr: DataFrame containing the training data
+    - y_tr: DataFrame containing the training labels
+    - X_ts: DataFrame containing the test data
+    - n_estimators: Number of trees in the forest
+    Returns:
+    - y_pred: DataFrame containing the predicted labels
+    """
     predictions = []
     for i in range(n_estimators):
         rf = DecisionTreeClassifier()
@@ -80,6 +137,15 @@ def random_forest(X_tr, y_tr, X_ts, n_estimators=100):
 
 
 def neural_network(X_tr, y_tr, X_ts):
+    """
+    Perform neural network
+    Inputs:
+    - X_tr: DataFrame containing the training data
+    - y_tr: DataFrame containing the training labels
+    - X_ts: DataFrame containing the test data
+    Returns:
+    - y_pred: DataFrame containing the predicted labels
+    """
     nn = MLPClassifier(random_state=1)
     nn.fit(X_tr, y_tr)
     y_pred = nn.predict(X_ts)
@@ -87,7 +153,13 @@ def neural_network(X_tr, y_tr, X_ts):
 
 
 def plot_models(spca_HCC_score, stsne_HCC_score, sumap_HCC_score, kmeans_HCC_score, gmm_HCC_score, dbscan_HCC_score, spectral_HCC_score, lr_HCC_score, svm_HCC_lin_score, svm_HCC_rbf_score, rf_HCC_score, nn_HCC_score, spca_MCF_score, stsne_MCF_score, sumap_MCF_score, kmeans_MCF_score, gmm_MCF_score, dbscan_MCF_score, spectral_MCF_score, lr_MCF_score, svm_MCF_lin_score, svm_MCF_rbf_score, rf_MCF_score, nn_MCF_score):
-    # Plot the accuracy of the different models
+    """
+    Plot the model accuracies
+    Inputs:
+    - accuracy scores for each model for both HCC1806 and MCF7
+    Returns:
+    - None
+    """
     plt.figure(figsize=(20,8))
     plt.subplot(1, 2, 1)
     models = ['PCA', 't-SNE', 'UMAP','KMeans', 'GMM', 'DBSCAN', 'Spectral Clustering', 'Logistic Regression', 'SVM (Linear)', 'SVM (RBF)', 'Random Forest', 'Neural Network']
@@ -96,7 +168,7 @@ def plot_models(spca_HCC_score, stsne_HCC_score, sumap_HCC_score, kmeans_HCC_sco
     plt.bar(models, HCC_scores, color='blue', alpha=0.7)
     plt.title('HCC1806: Model Accuracy')
     plt.ylabel('Accuracy')
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=55)
     plt.grid(True)
 
     plt.subplot(1, 2, 2)
@@ -104,6 +176,6 @@ def plot_models(spca_HCC_score, stsne_HCC_score, sumap_HCC_score, kmeans_HCC_sco
     plt.bar(models, MCF_scores, color='red', alpha=0.7)
     plt.title('MCF7: Model Accuracy')
     plt.ylabel('Accuracy')
-    plt.xticks(rotation=45)
+    plt.xticks(rotation=55)
     plt.grid(True)
     plt.show()

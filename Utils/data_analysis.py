@@ -7,6 +7,14 @@ from Utils.processing import *
 print("data_analysis.py loaded")
 
 def plot_gene_expression(df_HCC, df_MCF):
+    """
+    Plot the distribution of gene expression for HCC1806 and MCF7
+    Inputs:
+    - df_HCC: DataFrame containing the gene expression data for HCC1806
+    - df_MCF: DataFrame containing the gene expression data for MCF7
+    Returns:
+    - None
+    """
     plt.figure(figsize=(20,8))
     plt.subplot(1, 2, 1)
     plt.hist(df_HCC.sum(axis=1), bins=100, color='blue', edgecolor='black', alpha=0.7, log=True)
@@ -24,6 +32,14 @@ def plot_gene_expression(df_HCC, df_MCF):
 
 
 def plot_zeros(df_HCC, df_MCF):
+    """
+    Plot the distribution of zeros for HCC1806 and MCF7
+    Inputs:
+    - df_HCC: DataFrame containing the gene expression data for HCC1806
+    - df_MCF: DataFrame containing the gene expression data for MCF7
+    Returns:
+    - None
+    """
     plt.figure(figsize=(20,8))
     plt.subplot(1, 2, 1)
     plt.hist((df_HCC == 0).sum(axis=1), bins=100, color='blue', edgecolor='black', alpha=0.7, log=True)
@@ -41,11 +57,17 @@ def plot_zeros(df_HCC, df_MCF):
 
 
 def plot_top_genes(df_HCC, df_MCF):
-    # Extract most expressed genes
+    """
+    Plot the distribution of the most expressed genes for HCC1806 and MCF7
+    Inputs:
+    - df_HCC: DataFrame containing the gene expression data for HCC1806 
+    - df_MCF: DataFrame containing the gene expression data for MCF7
+    Returns:
+    - None
+    """
     top_genes_HCC = df_HCC.sum(axis=1).sort_values(ascending=False).head(10).index
     top_genes_MCF = df_MCF.sum(axis=1).sort_values(ascending=False).head(10).index
 
-    # Plot the distribution of the most expressed genes
     plt.figure(figsize=(20,8))
     plt.subplot(1, 2, 1)
     for gene in top_genes_HCC:
@@ -68,6 +90,14 @@ def plot_top_genes(df_HCC, df_MCF):
 
 
 def diff_genes(df_hypo, df_norm):
+    """
+    Compute the difference in expression between hypoxia and normoxia for each gene
+    Inputs:
+    - df_hypo: DataFrame containing the gene expression data for hypoxia
+    - df_norm: DataFrame containing the gene expression data for normoxia
+    Returns:
+    - diff: List of tuples (gene, difference in expression)
+    """
     diff = []
     for gene in df_hypo.index:
         diff.append((gene, df_hypo.loc[gene].mean() - df_norm.loc[gene].mean()))
@@ -75,14 +105,20 @@ def diff_genes(df_hypo, df_norm):
 
 
 def plot_diff_genes(df_HCC, df_MCF):
-    # Split the data into hypoxia and normoxia
+    """
+    Plot the top 10 genes with the largest difference in expression between hypoxia and normoxia for HCC1806 and MCF7
+    Inputs:
+    - df_HCC: DataFrame containing the gene expression data for HCC1806
+    - df_MCF: DataFrame containing the gene expression data for MCF7
+    Returns:
+    - None
+    """
     df_HCC_hypo, df_HCC_norm = split_hypo_norm(df_HCC.T)
     df_MCF_hypo, df_MCF_norm = split_hypo_norm(df_MCF.T)
 
     diff_genes_HCC = diff_genes(df_HCC_hypo.T, df_HCC_norm.T)
     diff_genes_MCF = diff_genes(df_MCF_hypo.T, df_MCF_norm.T)
 
-    # Barplot of number of occurences of the top 10 genes with the largest difference in expression between hypoxia and normoxia
     plt.figure(figsize=(20,8))
     plt.subplot(1, 2, 1)
     genes_HCC = [gene[0] for gene in diff_genes_HCC[:10]]
@@ -109,6 +145,16 @@ def plot_diff_genes(df_HCC, df_MCF):
 
 
 def hist_cor(df, title="", k = 3, cells=None):
+    """
+    Plot the histogram of the correlation between k cells expression profiles
+    Inputs:
+    - df: DataFrame containing the gene expression data
+    - title: Title of the plot
+    - k: Number of cells
+    - cells: List of cells
+    Returns:
+    - None
+    """
     if cells is None: 
         c_small = df.corr().sample(n=k,axis='columns')
     else:
